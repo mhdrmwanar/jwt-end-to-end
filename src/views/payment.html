@@ -493,7 +493,7 @@
                 <ul>
                     <li><strong>Enkripsi AES:</strong> Semua data pembayaran dienkripsi dengan algoritma AES 256-bit</li>
                     <li><strong>Kunci Per-Pengguna:</strong> Setiap pengguna memiliki kunci privat unik yang diturunkan dari identifiernya</li>
-                    <li><strong>Key Derivation:</strong> PBKDF2 dengan 10,000 iterasi untuk generasi kunci yang aman</li>
+                    <li><strong>Key Generation:</strong> SHA-256 hashing untuk generasi kunci deterministik yang aman</li>
                     <li><strong>Integritas Data:</strong> SHA-256 hashing untuk verifikasi kunci</li>
                     <li><strong>Token Keamanan:</strong> Token pembayaran terbatas waktu (kadaluarsa 15 menit)</li>
                     <li><strong>Tanpa Plain Text:</strong> Data sensitif tidak pernah disimpan dalam plain text</li>

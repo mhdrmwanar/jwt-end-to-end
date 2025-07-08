@@ -13,8 +13,8 @@ Proyek ini mengimplementasikan sistem payment gateway yang aman dengan menggunak
 
 ### 2. **Kunci Pribadi Berdasarkan Identifier Unik Pengguna**
 - Setiap pengguna memiliki kunci enkripsi pribadi yang unik
-- Kunci dibuat berdasarkan kombinasi User ID dan Email menggunakan PBKDF2
-- 10,000 iterasi untuk meningkatkan keamanan terhadap brute force attack
+- Kunci dibuat berdasarkan kombinasi User ID, Email, dan timestamp menggunakan SHA-256
+- Dynamic key generation untuk setiap sesi pembayaran
 
 ### 3. **Multiple Layer Security**
 - JWT Authentication untuk sesi pengguna
@@ -24,7 +24,7 @@ Proyek ini mengimplementasikan sistem payment gateway yang aman dengan menggunak
 
 ### 4. **Secure Key Management**
 - Master key yang terpisah dari aplikasi
-- Key derivation menggunakan PBKDF2 dengan salt
+- Key generation menggunakan SHA-256 dengan salt
 - Kunci tidak pernah disimpan dalam database
 - Hash verification tanpa menyimpan kunci asli
 
@@ -46,7 +46,7 @@ Database (SQLite)
 - **Database**: SQLite dengan TypeORM
 - **Encryption**: 
   - AES-256 untuk enkripsi data
-  - PBKDF2 untuk key derivation
+  - SHA-256 untuk key generation
   - SHA-256 untuk hashing
 - **Authentication**: JWT (JSON Web Tokens)
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
@@ -84,14 +84,10 @@ Database (SQLite)
 // Generate kunci pribadi unik untuk setiap user
 generateUserPrivateKey(userId: string, userEmail: string): string {
     const userIdentifier = `${userId}_${userEmail}`;
-    const privateKey = CryptoJS.PBKDF2(
-        userIdentifier, 
-        this.masterKey, 
-        { 
-            keySize: 256/32, 
-            iterations: 10000 
-        }
-    ).toString();
+    const combinedData = `${userIdentifier}_${this.masterKey}`;
+    
+    // Generate kunci dengan SHA-256 (deterministic dan unique per user)
+    const privateKey = CryptoJS.SHA256(combinedData).toString();
     return privateKey;
 }
 

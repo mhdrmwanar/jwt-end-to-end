@@ -4,7 +4,7 @@ import * as crypto from 'crypto';
 
 /**
  * Service untuk implementasi keamanan end-to-end dengan algoritma AES
- * dan kunci pribadi berdasarkan identifier unik pengguna
+ * dan kunci pribadi berdasarkan identifier unik pengguna menggunakan SHA-256
  */
 class EncryptionService {
     private masterKey: string;
@@ -21,14 +21,12 @@ class EncryptionService {
      */
     generateUserPrivateKey(userId: string | number, userEmail: string): string {
         const userIdentifier = `${userId}_${userEmail}`;
-        const privateKey = CryptoJS.PBKDF2(
-            userIdentifier, 
-            this.masterKey, 
-            { 
-                keySize: 256/32, 
-                iterations: 10000 
-            }
-        ).toString();
+        
+        // Gabungkan identifier dengan master key untuk deterministic key
+        const combinedData = `${userIdentifier}_${this.masterKey}`;
+        
+        // Generate kunci dengan SHA-256 (deterministic dan unique per user)
+        const privateKey = CryptoJS.SHA256(combinedData).toString();
         
         return privateKey;
     }
