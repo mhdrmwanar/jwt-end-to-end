@@ -64,6 +64,20 @@
         .btn-danger:hover {
             background-color: #c82333;
         }
+        .btn-admin {
+            background-color: #6f42c1;
+            color: white;
+        }
+        .btn-admin:hover {
+            background-color: #5a2d91;
+        }
+        .btn-payment {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-payment:hover {
+            background-color: #1e7e34;
+        }
         .error {
             color: #dc3545;
             text-align: center;
@@ -99,8 +113,35 @@
             </div>
             
             <div class="buttons">
-                <button class="btn-primary" onclick="refreshProfile()">Refresh Profile</button>
-                <button class="btn-danger" onclick="logout()">Logout</button>
+                <button class="btn-payment" onclick="goToPayment()">💳 Payment Gateway</button>
+                <button class="btn-primary" onclick="refreshProfile()">🔄 Refresh Profile</button>
+                <button class="btn-admin" onclick="goToAdmin()" id="adminBtn" style="display: none;">🛠️ Admin Panel</button>
+                <button class="btn-danger" onclick="logout()">🚪 Logout</button>
+            </div>
+            
+            <!-- Admin Quick Actions (only visible for admin users) -->
+            <div id="adminActions" style="display: none; margin-top: 20px; padding: 20px; background-color: #f8f9fa; border-radius: 5px; border-left: 4px solid #6f42c1;">
+                <h4 style="color: #6f42c1; margin-top: 0;">🛠️ Admin Quick Actions</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 15px;">
+                    <button class="btn-danger" onclick="clearAllUsers()" style="font-size: 14px; padding: 8px 12px;">
+                        🗑️ Clear All Users
+                    </button>
+                    <button class="btn-danger" onclick="clearAllPayments()" style="font-size: 14px; padding: 8px 12px;">
+                        💳 Clear All Payments
+                    </button>
+                    <button class="btn-danger" onclick="clearAllTransactions()" style="font-size: 14px; padding: 8px 12px;">
+                        📊 Clear All Transactions
+                    </button>
+                    <button onclick="showDatabaseStats()" style="background-color: #17a2b8; color: white; font-size: 14px; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">
+                        📈 Database Stats
+                    </button>
+                </div>
+                
+                <!-- Database Stats Display -->
+                <div id="dbStatsDisplay" style="margin-top: 15px; padding: 15px; background: white; border-radius: 5px; display: none;">
+                    <h5 style="color: #495057; margin-top: 0;">📊 Database Statistics</h5>
+                    <div id="statsContent" style="font-size: 14px; color: #6c757d;"></div>
+                </div>
             </div>
         </div>
         
@@ -152,6 +193,25 @@
             document.getElementById('createdAt').textContent = new Date(user.createdAt).toLocaleDateString();
             document.getElementById('updatedAt').textContent = new Date(user.updatedAt).toLocaleDateString();
             
+            // Check if user is admin (admin, administrator, or demo user)
+            console.log('User data:', user);
+            console.log('Username:', user.username);
+            console.log('Email:', user.email);
+            
+            const isAdmin = user.username.toLowerCase().includes('admin') || 
+                           user.username.toLowerCase() === 'demo' ||
+                           user.email.toLowerCase().includes('admin');
+            
+            console.log('Is Admin:', isAdmin);
+                           
+            if (isAdmin) {
+                console.log('Showing admin features...');
+                document.getElementById('adminBtn').style.display = 'inline-block';
+                document.getElementById('adminActions').style.display = 'block';
+            } else {
+                console.log('Not admin user, hiding admin features');
+            }
+            
             document.getElementById('profile').style.display = 'block';
         }
 
@@ -160,6 +220,138 @@
             document.getElementById('profile').style.display = 'none';
             document.getElementById('message').innerHTML = '';
             loadProfile();
+        }
+
+        // Navigation functions
+        function goToPayment() {
+            window.location.href = '/payment.html';
+        }
+
+        function goToAdmin() {
+            // Set admin token for seamless access
+            const token = localStorage.getItem('token');
+            if (token) {
+                localStorage.setItem('adminToken', token);
+            }
+            window.open('/admin.html', '_blank');
+        }
+
+        // Admin functions
+        async function clearAllUsers() {
+            if (!confirm('🚨 HAPUS SEMUA USERS?\n\nSemua data users akan dihapus permanen!\nTindakan ini tidak dapat dibatalkan!\n\nKlik OK untuk melanjutkan.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/users/clear', { method: 'DELETE' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage('✅ Semua users berhasil dihapus!', 'success');
+                    showDatabaseStats(); // Refresh stats
+                } else {
+                    showMessage('❌ Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function clearAllPayments() {
+            if (!confirm('🚨 HAPUS SEMUA PAYMENTS?\n\nSemua data pembayaran akan dihapus permanen!\nTindakan ini tidak dapat dibatalkan!\n\nKlik OK untuk melanjutkan.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/payments/clear', { method: 'DELETE' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage('✅ Semua payments berhasil dihapus!', 'success');
+                    showDatabaseStats(); // Refresh stats
+                } else {
+                    showMessage('❌ Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function clearAllTransactions() {
+            if (!confirm('🚨 HAPUS SEMUA TRANSACTIONS?\n\nSemua data transaksi akan dihapus permanen!\nTindakan ini tidak dapat dibatalkan!\n\nKlik OK untuk melanjutkan.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/transactions/clear', { method: 'DELETE' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage('✅ Semua transactions berhasil dihapus!', 'success');
+                    showDatabaseStats(); // Refresh stats
+                } else {
+                    showMessage('❌ Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function showDatabaseStats() {
+            try {
+                const statsDisplay = document.getElementById('dbStatsDisplay');
+                const statsContent = document.getElementById('statsContent');
+                
+                statsContent.innerHTML = '🔄 Loading stats...';
+                statsDisplay.style.display = 'block';
+                
+                const response = await fetch('/admin/stats');
+                const data = await response.json();
+                
+                if (response.ok && data.stats) {
+                    const stats = data.stats;
+                    statsContent.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <div style="text-align: center; padding: 10px; background: #e3f2fd; border-radius: 5px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #1976d2;">👥 ${stats.users}</div>
+                                <div style="font-size: 12px; color: #666;">Total Users</div>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #388e3c;">💳 ${stats.payments}</div>
+                                <div style="font-size: 12px; color: #666;">Total Payments</div>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: #fff3e0; border-radius: 5px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #f57c00;">📊 ${stats.transactions}</div>
+                                <div style="font-size: 12px; color: #666;">Total Transactions</div>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #2e7d32;">✅ ${stats.completedPayments}</div>
+                                <div style="font-size: 12px; color: #666;">Completed</div>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: #fff8e1; border-radius: 5px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #f9a825;">⏳ ${stats.pendingPayments}</div>
+                                <div style="font-size: 12px; color: #666;">Pending</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 10px; font-size: 12px; color: #888;">
+                            📅 Updated: ${new Date().toLocaleString('id-ID')}
+                        </div>
+                    `;
+                } else {
+                    statsContent.innerHTML = '<p style="color: #dc3545;">❌ Error loading stats</p>';
+                }
+            } catch (error) {
+                document.getElementById('statsContent').innerHTML = '<p style="color: #dc3545;">❌ Error: ' + error.message + '</p>';
+            }
+        }
+
+        function showMessage(text, type = 'success') {
+            const messageEl = document.getElementById('message');
+            messageEl.innerHTML = `<div class="${type}" style="padding: 10px; margin: 10px 0; border-radius: 5px; ${type === 'success' ? 'background-color: #d4edda; border: 1px solid #c3e6cb;' : 'background-color: #f8d7da; border: 1px solid #f5c6cb;'}">${text}</div>`;
+            
+            setTimeout(() => {
+                messageEl.innerHTML = '';
+            }, 5000);
         }
 
         function logout() {

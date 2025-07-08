@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Quick Admin Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e, #2d2d44);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            margin: 0;
+        }
+        .container {
+            background: rgba(30, 30, 46, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #7877c6, #ff77c6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-admin {
+            background: linear-gradient(135deg, #6f42c1, #8e5dc8);
+            color: white;
+        }
+        .btn-admin:hover {
+            background: linear-gradient(135deg, #5a2d91, #7a4db3);
+            transform: translateY(-2px);
+        }
+        .btn-demo {
+            background: linear-gradient(135deg, #17a2b8, #20c997);
+            color: white;
+        }
+        .btn-demo:hover {
+            background: linear-gradient(135deg, #138496, #1abc9c);
+            transform: translateY(-2px);
+        }
+        .btn-regular {
+            background: linear-gradient(135deg, #6c757d, #858585);
+            color: white;
+        }
+        .btn-regular:hover {
+            background: linear-gradient(135deg, #545b62, #707070);
+            transform: translateY(-2px);
+        }
+        .info {
+            background: rgba(45, 45, 68, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #a0a0b8;
+        }
+        .message {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #66bb6a;
+        }
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Quick Admin Access</h1>
+        
+        <div class="info">
+            <strong>🛠️ Admin Testing Panel</strong><br>
+            Quick login untuk testing fitur admin
+        </div>
+
+        <button class="btn btn-admin" onclick="loginAs('admin', 'admin123')">
+            🛠️ Login sebagai Admin<br>
+            <small style="opacity: 0.8;">Username: admin</small>
+        </button>
+
+        <button class="btn btn-demo" onclick="loginAs('demo', 'demo123')">
+            👤 Login sebagai Demo<br>
+            <small style="opacity: 0.8;">Username: demo (if exists)</small>
+        </button>
+
+        <button class="btn btn-regular" onclick="window.location.href='/login.html'">
+            🔐 Login Manual<br>
+            <small style="opacity: 0.8;">Form login biasa</small>
+        </button>
+
+        <div id="message" class="message"></div>
+
+        <div class="info">
+            <strong>📋 Test Account:</strong><br>
+            Admin: admin / admin123<br>
+            Demo: demo / demo123<br><br>
+            <strong>🎯 Expected Admin Features:</strong><br>
+            • 🛠️ Admin Panel Button<br>
+            • 🗑️ Clear Database Actions<br>
+            • 📊 Database Statistics<br>
+        </div>
+    </div>
+
+    <script>
+        async function loginAs(username, password) {
+            showMessage('🔄 Logging in...', 'success');
+            
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', result.token);
+                    showMessage('✅ Login berhasil! Redirecting...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 1000);
+                } else {
+                    showMessage('❌ Login gagal: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('token')) {
+            showMessage('🔍 Already logged in. Redirecting to dashboard...', 'success');
+            setTimeout(() => {
+                window.location.href = '/dashboard.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

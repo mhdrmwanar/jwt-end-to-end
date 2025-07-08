@@ -9,6 +9,7 @@ import connectDB from './config/db';
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import adminRoutes from './routes/adminRoutes';
 import path from 'path';
 
 const app = express();
@@ -38,10 +39,29 @@ connectDB();
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/payments', paymentRoutes);
+app.use('/admin', adminRoutes);
 
-// Default route - redirect to login page
+// Default route - redirect to login portal
 app.get('/', (req, res) => {
-    res.redirect('/login.html');
+    res.redirect('/portal.html');
+});
+
+// Admin panel routes
+app.get('/admin-panel', (req, res) => {
+    res.redirect('/admin.html');
+});
+
+app.get('/admin-login', (req, res) => {
+    res.redirect('/admin-login.html');
+});
+
+app.get('/login.admin', (req, res) => {
+    res.redirect('/admin-login.html');
+});
+
+// Debug route for testing admin detection
+app.get('/debug', (req, res) => {
+    res.redirect('/debug-admin.html');
 });
 
 // Health check endpoint

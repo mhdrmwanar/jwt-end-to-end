@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Comparison - User vs Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 50%, #1a1a2e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .comparison-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #7877c6, #ff77c6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .login-preview {
+            background: rgba(45, 45, 68, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .login-preview h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .user-preview h3 {
+            color: #7877c6;
+        }
+
+        .admin-preview h3 {
+            color: #dc3545;
+        }
+
+        .preview-frame {
+            background: rgba(30, 30, 46, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 400px;
+            position: relative;
+        }
+
+        .preview-content {
+            text-align: center;
+        }
+
+        .preview-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .user-preview .preview-title {
+            background: linear-gradient(135deg, #7877c6, #ff77c6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .admin-preview .preview-title {
+            background: linear-gradient(135deg, #dc3545, #ff4757);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .preview-subtitle {
+            color: #a0a0b8;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .mock-form {
+            text-align: left;
+        }
+
+        .mock-input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            background: rgba(45, 45, 68, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #a0a0b8;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .user-preview .mock-input:focus {
+            border-color: #7877c6;
+        }
+
+        .admin-preview .mock-input:focus {
+            border-color: #dc3545;
+        }
+
+        .mock-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .user-preview .mock-button {
+            background: linear-gradient(135deg, #7877c6, #ff77c6);
+            color: white;
+        }
+
+        .admin-preview .mock-button {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .mock-links {
+            text-align: center;
+            font-size: 14px;
+            color: #a0a0b8;
+        }
+
+        .mock-links a {
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .user-preview .mock-links a {
+            color: #7877c6;
+        }
+
+        .admin-preview .mock-links a {
+            color: #dc3545;
+        }
+
+        .actual-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .link-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 0 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .user-link {
+            background: linear-gradient(135deg, #7877c6, #ff77c6);
+            color: white;
+        }
+
+        .admin-link {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .features {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .features h3 {
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: rgba(45, 45, 68, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="comparison-container">
+        <div class="header">
+            <h1>🔐 Login Comparison</h1>
+            <p style="color: #a0a0b8; font-size: 1.1rem;">User Login vs Admin Login - Same Design, Different Purpose</p>
+        </div>
+
+        <div class="comparison-grid">
+            <!-- User Login Preview -->
+            <div class="login-preview user-preview">
+                <h3>👤 User Login</h3>
+                <div class="preview-frame">
+                    <div class="preview-content">
+                        <div class="preview-title">Welcome Back</div>
+                        <div class="preview-subtitle">Login to your secure payment account</div>
+                        
+                        <div class="mock-form">
+                            <input type="text" class="mock-input" placeholder="Enter your username or email" readonly>
+                            <input type="password" class="mock-input" placeholder="Enter your password" readonly>
+                            <button class="mock-button">Login</button>
+                        </div>
+                        
+                        <div class="mock-links">
+                            <p>Don't have an account? <a href="#">Register here</a></p>
+                            <p style="margin-top: 10px;"><a href="#">🛡️ Admin Login</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Login Preview -->
+            <div class="login-preview admin-preview">
+                <h3>🛡️ Admin Login</h3>
+                <div class="preview-frame">
+                    <div class="preview-content">
+                        <div class="preview-title">🛡️ Admin Access</div>
+                        <div class="preview-subtitle">Secure administrative login portal</div>
+                        
+                        <div class="mock-form">
+                            <input type="text" class="mock-input" placeholder="Enter admin username" readonly>
+                            <input type="password" class="mock-input" placeholder="Enter admin password" readonly>
+                            <button class="mock-button">🛡️ Admin Login</button>
+                        </div>
+                        
+                        <div class="mock-links">
+                            <p>User login? <a href="#">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actual-links">
+            <h3 style="margin-bottom: 20px; color: #ffffff;">🚀 Try the Actual Login Pages</h3>
+            <a href="/login.html" class="link-btn user-link" target="_blank">👤 Open User Login</a>
+            <a href="/admin-login.html" class="link-btn admin-link" target="_blank">🛡️ Open Admin Login</a>
+        </div>
+
+        <div class="features">
+            <h3>✨ Key Differences</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h4 style="color: #7877c6; margin-bottom: 10px;">User Login</h4>
+                    <p style="color: #a0a0b8; font-size: 14px;">
+                        • Standard user authentication<br>
+                        • Access to dashboard & payments<br>
+                        • Blue/purple color scheme<br>
+                        • Personal account management
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h4 style="color: #dc3545; margin-bottom: 10px;">Admin Login</h4>
+                    <p style="color: #a0a0b8; font-size: 14px;">
+                        • Admin-only authentication<br>
+                        • Database management access<br>
+                        • Red color scheme<br>
+                        • System administration tools
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h4 style="color: #28a745; margin-bottom: 10px;">Security Features</h4>
+                    <p style="color: #a0a0b8; font-size: 14px;">
+                        • Same modern design language<br>
+                        • SHA-256 encryption<br>
+                        • JWT authentication<br>
+                        • Role-based access control
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h4 style="color: #ffc107; margin-bottom: 10px;">Design Consistency</h4>
+                    <p style="color: #a0a0b8; font-size: 14px;">
+                        • Identical layout structure<br>
+                        • Consistent animations<br>
+                        • Same form styling<br>
+                        • Unified user experience
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+            <a href="/portal.html" style="color: #7877c6; text-decoration: none; font-weight: 600;">
+                🏠 Back to Login Portal
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -29,7 +29,28 @@ const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
     jwt.verify(token, secret, (err: any, user: any) => {
         if (err) {
             console.log('Token verification error:', err);
-            return res.status(403).json({ error: 'Invalid token' });
+            
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({ 
+                    error: 'Token expired', 
+                    message: 'Session has expired. Please login again.',
+                    code: 'TOKEN_EXPIRED'
+                });
+            }
+            
+            if (err.name === 'JsonWebTokenError') {
+                return res.status(403).json({ 
+                    error: 'Invalid token', 
+                    message: 'Token is malformed or invalid.',
+                    code: 'TOKEN_INVALID'
+                });
+            }
+            
+            return res.status(403).json({ 
+                error: 'Token verification failed', 
+                message: 'Unable to verify token.',
+                code: 'TOKEN_VERIFICATION_FAILED'
+            });
         }
         console.log('Token verified, user:', user);
         req.user = user;

@@ -14,7 +14,7 @@ class JwtService {
       id: user.id,
       email: user.email
     };
-    return jwt.sign(payload, this.secretKey, { expiresIn: '1h' });
+    return jwt.sign(payload, this.secretKey, { expiresIn: '24h' });
   }
 
   verifyToken(token: string): any {

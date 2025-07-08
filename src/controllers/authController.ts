@@ -118,6 +118,66 @@ class AuthController {
         // For JWT, logout is handled client-side by removing the token
         res.json({ message: 'Logout successful' });
     }
+
+    async adminLogin(req: Request, res: Response) {
+        try {
+            const { username, password } = req.body;
+
+            // Validate input
+            if (!username || !password) {
+                return res.status(400).json({ 
+                    error: 'Admin username and password are required' 
+                });
+            }
+
+            // Find user by username or email
+            const userRepository = AppDataSource.getRepository(User);
+            const user = await userRepository.findOne({
+                where: [
+                    { username },
+                    { email: username } // Allow login with email
+                ]
+            });
+
+            if (!user) {
+                return res.status(401).json({ error: 'Invalid admin credentials' });
+            }
+
+            // Check if user is admin
+            const isAdmin = user.username.toLowerCase().includes('admin') || 
+                           user.username.toLowerCase() === 'demo' ||
+                           user.email.toLowerCase().includes('admin');
+
+            if (!isAdmin) {
+                return res.status(403).json({ 
+                    error: 'Access denied. Admin privileges required.' 
+                });
+            }
+
+            // Validate password
+            const isValidPassword = await user.validatePassword(password);
+            if (!isValidPassword) {
+                return res.status(401).json({ error: 'Invalid admin credentials' });
+            }
+
+            // Generate JWT token with admin flag
+            const token = this.jwtService.signToken(user);
+
+            res.json({
+                message: 'Admin login successful',
+                token,
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    isAdmin: true
+                }
+            });
+        } catch (error) {
+            console.error('Admin login error:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 }
 
 export default new AuthController();

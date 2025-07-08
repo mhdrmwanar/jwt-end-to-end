@@ -201,6 +201,12 @@
             cursor: pointer;
         }
         
+        select[readonly] {
+            background: rgba(45, 45, 68, 0.5) !important;
+            cursor: default;
+            opacity: 0.8;
+        }
+        
         select option {
             background: #2d2d44;
             color: #ffffff;
@@ -385,16 +391,16 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="amount">Jumlah *</label>
-                        <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder="100.00" required>
+                        <input type="text" id="amount" name="amount" placeholder="100.000" required>
+                        <small style="color: #666; font-size: 12px;">Maksimal: Rp 999.999.999</small>
+                        <div id="amountPreview" style="color: #2196F3; font-weight: bold; margin-top: 5px; font-size: 14px;"></div>
                     </div>
                     <div class="form-group">
                         <label for="currency">Mata Uang *</label>
-                        <select id="currency" name="currency" required>
-                            <option value="IDR">IDR - Rupiah Indonesia</option>
-                            <option value="USD">USD - Dolar Amerika</option>
-                            <option value="EUR">EUR - Euro</option>
-                            <option value="SGD">SGD - Dolar Singapura</option>
+                        <select id="currency" name="currency" required readonly>
+                            <option value="IDR" selected>IDR - Rupiah Indonesia</option>
                         </select>
+                        <small style="color: #666; font-size: 12px;">Hanya mendukung Rupiah Indonesia</small>
                     </div>
                 </div>
 
@@ -544,11 +550,21 @@
                     document.getElementById('userInfo').textContent = 
                         `Selamat datang, ${data.user.username} (${data.user.email})`;
                 } else {
+                    if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid
+                        alert('Session Anda telah berakhir. Silakan login kembali.');
+                        logout();
+                        return;
+                    }
                     throw new Error('Gagal memuat info pengguna');
                 }
             } catch (error) {
                 console.error('Error memuat info pengguna:', error);
-                logout();
+                if (error.message.includes('401') || error.message.includes('403')) {
+                    logout();
+                } else {
+                    showMessage('Terjadi kesalahan saat memuat informasi pengguna.', 'error');
+                }
             }
         }
 
@@ -579,6 +595,46 @@
             e.target.value = value;
         });
 
+        // Format input jumlah pembayaran (Rupiah dengan pemisah ribuan)
+        document.getElementById('amount').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Jika kosong, clear preview dan reset
+            if (!value) {
+                e.target.value = '';
+                e.target.removeAttribute('data-raw-value');
+                const preview = document.getElementById('amountPreview');
+                if (preview) {
+                    preview.textContent = '';
+                }
+                return;
+            }
+            
+            // Batasi maksimal 999.999.999
+            if (parseInt(value) > 999999999) {
+                value = '999999999';
+                showMessage('Jumlah maksimal adalah Rp 999.999.999', 'warning');
+            }
+            
+            // Format dengan pemisah ribuan (titik)
+            let formattedValue = '';
+            if (value) {
+                formattedValue = parseInt(value).toLocaleString('id-ID');
+                
+                // Tampilkan preview format Rupiah
+                const preview = document.getElementById('amountPreview');
+                if (preview) {
+                    preview.textContent = `Rp ${formattedValue}`;
+                }
+            }
+            
+            // Set nilai dengan format pemisah ribuan di input field
+            e.target.value = formattedValue;
+            
+            // Simpan nilai asli (tanpa format) untuk submit form
+            e.target.setAttribute('data-raw-value', value);
+        });
+
         // Pengiriman form pembayaran
         document.getElementById('paymentForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -586,8 +642,24 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
             
-            // Konversi string angka ke angka asli
-            data.amount = parseFloat(data.amount);
+            // Ambil nilai raw amount (tanpa format)
+            const amountInput = document.getElementById('amount');
+            const rawAmount = amountInput.getAttribute('data-raw-value') || data.amount.replace(/\D/g, '');
+            
+            // Validasi jumlah maksimal
+            if (parseInt(rawAmount) > 999999999) {
+                showMessage('Jumlah pembayaran tidak boleh melebihi Rp 999.999.999', 'error');
+                return;
+            }
+            
+            // Validasi mata uang harus IDR
+            if (data.currency !== 'IDR') {
+                showMessage('Hanya mata uang Rupiah Indonesia (IDR) yang didukung', 'error');
+                return;
+            }
+            
+            // Konversi string angka ke angka asli menggunakan raw value
+            data.amount = parseInt(rawAmount); // Gunakan raw value untuk submit
             data.expiryMonth = parseInt(data.expiryMonth);
             data.expiryYear = parseInt(data.expiryYear);
             
@@ -697,7 +769,7 @@
                     <div class="payment-item ${statusClass}">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <strong>${payment.currency} ${payment.amount.toLocaleString('id-ID')}</strong> - ${payment.paymentMethod}
+                                <strong>Rp ${payment.amount.toLocaleString('id-ID')}</strong> - ${payment.paymentMethod}
                                 <br>
                                 <small style="color: #a0a0b8;">ID: ${payment.id}</small>
                                 <br>

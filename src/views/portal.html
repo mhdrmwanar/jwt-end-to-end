@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Portal - Secure Payment Gateway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .login-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .login-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-card.admin::before {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .login-card.admin:hover {
+            border-color: #dc3545;
+        }
+
+        .login-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .login-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .login-card p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .login-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .login-btn.admin {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn.admin:hover {
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .features {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .features h4 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .feature h5 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+        }
+
+        .quick-links {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .quick-links a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 8px 16px;
+            background: #e9ecef;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .quick-links a:hover {
+            background: #dee2e6;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .login-options {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Login Portal</h1>
+            <p>Choose your login type to access the secure payment gateway</p>
+        </div>
+
+        <div class="login-options">
+            <!-- User Login -->
+            <div class="login-card">
+                <span class="login-icon">👤</span>
+                <h3>User Login</h3>
+                <p>Access your personal payment dashboard, make transactions, and manage your account securely.</p>
+                <a href="/login.html" class="login-btn">
+                    Login as User
+                </a>
+            </div>
+
+            <!-- Admin Login -->
+            <div class="login-card admin">
+                <span class="login-icon">🛡️</span>
+                <h3>Admin Login</h3>
+                <p>Administrative access to manage database, view statistics, and control system operations.</p>
+                <a href="/admin-login.html" class="login-btn admin">
+                    Admin Login
+                </a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h4>🚀 System Features</h4>
+            <div class="feature-grid">
+                <div class="feature">
+                    <span class="feature-icon">🔒</span>
+                    <h5>SHA-256 Encryption</h5>
+                    <p>Advanced encryption for secure data protection</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🎫</span>
+                    <h5>JWT Authentication</h5>
+                    <p>Token-based secure user authentication</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">💳</span>
+                    <h5>Payment Gateway</h5>
+                    <p>Secure payment processing system</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📊</span>
+                    <h5>Admin Dashboard</h5>
+                    <p>Comprehensive database management</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-links">
+            <h4 style="margin-bottom: 15px; color: #333;">Quick Access</h4>
+            <a href="/register.html">📝 Register New User</a>
+            <a href="/debug-admin.html">🔍 Debug Tools</a>
+            <a href="/health">📊 System Status</a>
+        </div>
+
+        <div class="footer">
+            <p>🔐 Secure Payment Gateway v1.0.0</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Built with Node.js, TypeScript, SQLite & JWT Authentication
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            const adminToken = localStorage.getItem('adminToken');
+            
+            if (token || adminToken) {
+                // Show login status
+                const statusEl = document.createElement('div');
+                statusEl.innerHTML = `
+                    <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                        ✅ <strong>Already logged in!</strong><br>
+                        <a href="/dashboard.html" style="color: #155724; text-decoration: underline;">Go to Dashboard</a> |
+                        <a href="/admin.html" style="color: #155724; text-decoration: underline;">Go to Admin Panel</a> |
+                        <button onclick="logout()" style="background: none; border: none; color: #155724; text-decoration: underline; cursor: pointer;">Logout</button>
+                    </div>
+                `;
+                
+                const container = document.querySelector('.container');
+                container.insertBefore(statusEl, container.firstChild.nextSibling);
+            }
+        });
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminToken');
+            location.reload();
+        }
+    </script>
+</body>
+</html>

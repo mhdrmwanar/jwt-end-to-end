@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Admin Login & Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .status { padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        .warning { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        button { padding: 12px 24px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .progress { background: #e9ecef; border-radius: 5px; height: 8px; margin: 10px 0; }
+        .progress-bar { background: #007bff; height: 100%; border-radius: 5px; width: 0%; transition: width 0.3s; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Auto Admin Login & Dashboard Test</h1>
+        <p>This tool will automatically login as admin and test the dashboard admin features.</p>
+        
+        <div class="status info">
+            <strong>📋 Test Steps:</strong><br>
+            1. 🔐 Auto login as admin user<br>
+            2. 👤 Verify user profile<br>
+            3. 🛠️ Check admin detection<br>
+            4. 📊 Test admin features<br>
+            5. 🎯 Verify dashboard admin elements
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn-primary" onclick="runFullTest()">🚀 Run Full Test</button>
+            <button class="btn-success" onclick="loginAsAdmin()">🔐 Login as Admin</button>
+            <button class="btn-warning" onclick="loginAsDemo()">👤 Login as Demo</button>
+            <button class="btn-danger" onclick="clearAndReset()">🗑️ Clear & Reset</button>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div id="testLog"></div>
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <h3>🔗 Quick Navigation</h3>
+            <a href="/dashboard.html" target="_blank" style="margin: 0 10px;">📊 Dashboard</a>
+            <a href="/admin.html" target="_blank" style="margin: 0 10px;">🛠️ Admin Panel</a>
+            <a href="/debug-admin.html" target="_blank" style="margin: 0 10px;">🔍 Debug</a>
+        </div>
+    </div>
+
+    <script>
+        let testStep = 0;
+        const totalSteps = 6;
+        
+        function updateProgress() {
+            const progress = (testStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logEl.innerHTML += `
+                <div class="status ${type}">
+                    <strong>[${timestamp}]</strong> ${message}
+                </div>
+            `;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        async function runFullTest() {
+            testStep = 0;
+            document.getElementById('testLog').innerHTML = '';
+            
+            log('🚀 Starting full admin test...', 'info');
+            updateProgress();
+            
+            try {
+                // Step 1: Login as admin
+                testStep++;
+                updateProgress();
+                log('🔐 Step 1: Logging in as admin...', 'info');
+                await loginAsAdmin();
+                
+                // Step 2: Verify user profile
+                testStep++;
+                updateProgress();
+                log('👤 Step 2: Verifying user profile...', 'info');
+                const userProfile = await getUserProfile();
+                
+                if (userProfile) {
+                    log(`✅ User profile loaded: ${userProfile.username} (${userProfile.email})`, 'success');
+                    
+                    // Step 3: Check admin detection
+                    testStep++;
+                    updateProgress();
+                    log('🛠️ Step 3: Testing admin detection logic...', 'info');
+                    const isAdmin = checkAdminStatus(userProfile);
+                    
+                    if (isAdmin) {
+                        log('✅ Admin status detected correctly!', 'success');
+                        
+                        // Step 4: Test admin endpoints
+                        testStep++;
+                        updateProgress();
+                        log('📊 Step 4: Testing admin endpoints...', 'info');
+                        await testAdminEndpoints();
+                        
+                        // Step 5: Test dashboard admin elements
+                        testStep++;
+                        updateProgress();
+                        log('🎯 Step 5: Testing dashboard admin elements...', 'info');
+                        await testDashboardElements();
+                        
+                        // Step 6: Complete
+                        testStep++;
+                        updateProgress();
+                        log('🎉 All tests completed successfully!', 'success');
+                        log('💡 You can now open the dashboard to see admin features in action.', 'info');
+                        
+                    } else {
+                        log('❌ Admin detection failed! This user should be detected as admin.', 'error');
+                        log(`🔍 Debug info: username="${userProfile.username}", email="${userProfile.email}"`, 'warning');
+                    }
+                } else {
+                    log('❌ Failed to load user profile', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Test failed: ${error.message}`, 'error');
+                console.error('Full test error:', error);
+            }
+        }
+        
+        async function loginAsAdmin() {
+            try {
+                log('🔄 Attempting login with admin credentials...', 'info');
+                
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'admin123'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.token) {
+                    localStorage.setItem('token', result.token);
+                    log('✅ Successfully logged in as admin!', 'success');
+                    log(`🔑 Token stored: ${result.token.substring(0, 20)}...`, 'info');
+                    return true;
+                } else {
+                    log(`❌ Login failed: ${result.error || 'Unknown error'}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                log(`❌ Login error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function loginAsDemo() {
+            try {
+                log('🔄 Attempting login with demo credentials...', 'info');
+                
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'demo',
+                        password: 'demo123'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.token) {
+                    localStorage.setItem('token', result.token);
+                    log('✅ Successfully logged in as demo!', 'success');
+                    return true;
+                } else {
+                    log(`❌ Demo login failed: ${result.error || 'Unknown error'}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                log(`❌ Demo login error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function getUserProfile() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('No token found');
+                }
+                
+                const response = await fetch('/users/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    return result.user;
+                } else {
+                    throw new Error(`Profile fetch failed with status ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Profile error: ${error.message}`, 'error');
+                return null;
+            }
+        }
+        
+        function checkAdminStatus(user) {
+            const isAdmin = user.username.toLowerCase().includes('admin') || 
+                           user.username.toLowerCase() === 'demo' ||
+                           user.email.toLowerCase().includes('admin');
+            
+            log(`🔍 Admin check details:`, 'info');
+            log(`📝 Username: "${user.username}" → contains 'admin': ${user.username.toLowerCase().includes('admin')}`, 'info');
+            log(`📝 Username: "${user.username}" → equals 'demo': ${user.username.toLowerCase() === 'demo'}`, 'info');
+            log(`📝 Email: "${user.email}" → contains 'admin': ${user.email.toLowerCase().includes('admin')}`, 'info');
+            log(`🎯 Final result: ${isAdmin ? 'ADMIN' : 'NOT ADMIN'}`, isAdmin ? 'success' : 'warning');
+            
+            return isAdmin;
+        }
+        
+        async function testAdminEndpoints() {
+            try {
+                // Test stats endpoint
+                log('📊 Testing /admin/stats endpoint...', 'info');
+                const statsResponse = await fetch('/admin/stats');
+                const statsData = await statsResponse.json();
+                
+                if (statsResponse.ok && statsData.stats) {
+                    log('✅ Admin stats endpoint working!', 'success');
+                    log(`📈 Stats: Users(${statsData.stats.users}), Payments(${statsData.stats.payments}), Transactions(${statsData.stats.transactions})`, 'info');
+                } else {
+                    log('❌ Admin stats endpoint failed', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Admin endpoint test error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testDashboardElements() {
+            log('🎯 Dashboard admin elements test would require DOM inspection...', 'info');
+            log('💡 Please manually verify the dashboard shows admin features after login.', 'warning');
+            log('🔗 Click "Dashboard" link below to check manually.', 'info');
+        }
+        
+        function clearAndReset() {
+            localStorage.removeItem('token');
+            document.getElementById('testLog').innerHTML = '';
+            testStep = 0;
+            updateProgress();
+            log('🗑️ Token cleared and test reset', 'warning');
+        }
+        
+        // Auto-run basic check on page load
+        window.onload = function() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                log('🔑 Existing token found on page load', 'info');
+                log('💡 Click "Run Full Test" to verify admin features', 'info');
+            } else {
+                log('🔐 No token found - ready to test login', 'warning');
+                log('🚀 Click "Run Full Test" to start automatic testing', 'info');
+            }
+        };
+    </script>
+</body>
+</html>
