@@ -166,6 +166,11 @@
             transform: none;
         }
         
+        /* Button enabled by default dengan full opacity */
+        button {
+            opacity: 1;
+        }
+        
         .error {
             background: rgba(220, 53, 69, 0.1);
             border: 1px solid rgba(220, 53, 69, 0.3);
@@ -251,14 +256,14 @@
     <div class="container">
         <h1>Welcome Back</h1>
         <div class="subtitle">Login to your secure payment account</div>
-        <form id="loginForm">
+        <form id="loginForm" autocomplete="off">
             <div class="form-group">
                 <label for="username">Username or Email:</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username or email" required>
+                <input type="text" id="username" name="username" placeholder="Enter your username or email" autocomplete="off" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="new-password" required>
             </div>
             <button type="submit" id="loginBtn">
                 <span id="loginText">Login</span>
@@ -274,11 +279,83 @@
     </div>
 
     <script>
+        // Auto redirect jika sudah login
+        window.onload = function() {
+            // Check jika sudah login, redirect ke payment
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = '/payment.html';
+            }
+            // Button enabled by default, tidak ada validasi awal
+        };
+
+        // Real-time validation - hanya aktif setelah user mulai mengetik
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        let userStartedTyping = false;
+
+        function validateForm() {
+            // Hanya validasi jika user sudah mulai mengetik
+            if (!userStartedTyping) return;
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            // Enable/disable button berdasarkan form validity
+            if (username && password) {
+                loginBtn.disabled = false;
+                loginBtn.style.opacity = '1';
+            } else {
+                loginBtn.disabled = true;
+                loginBtn.style.opacity = '0.6';
+            }
+        }
+
+        // Validate saat user mengetik - tapi set flag bahwa user sudah mulai
+        usernameInput.addEventListener('input', function() {
+            userStartedTyping = true;
+            validateForm();
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            userStartedTyping = true;
+            validateForm();
+        });
+
+        // Tidak ada initial validation - button enabled secara default
+
+        // Show/hide loading state
+        function setLoading(isLoading) {
+            const loginText = document.getElementById('loginText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            if (isLoading) {
+                loginText.style.display = 'none';
+                loadingSpinner.style.display = 'block';
+                loginBtn.disabled = true;
+            } else {
+                loginText.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                validateForm(); // Re-enable jika form valid
+            }
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
+            
+            // Validasi client-side
+            if (!data.username.trim() || !data.password.trim()) {
+                document.getElementById('message').innerHTML = '<div class="error">Mohon isi semua field yang diperlukan.</div>';
+                return;
+            }
+
+            setLoading(true);
+            document.getElementById('message').innerHTML = '';
             
             try {
                 const response = await fetch('/auth/login', {
@@ -292,7 +369,7 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    document.getElementById('message').innerHTML = '<div class="success">' + result.message + '</div>';
+                    document.getElementById('message').innerHTML = '<div class="success">Login berhasil! Redirecting...</div>';
                     
                     // Store token in localStorage
                     localStorage.setItem('token', result.token);
@@ -302,10 +379,19 @@
                         window.location.href = '/payment.html';
                     }, 1000);
                 } else {
-                    document.getElementById('message').innerHTML = '<div class="error">' + result.error + '</div>';
+                    document.getElementById('message').innerHTML = '<div class="error">' + (result.error || 'Login gagal. Periksa username dan password Anda.') + '</div>';
+                    setLoading(false);
                 }
             } catch (error) {
-                document.getElementById('message').innerHTML = '<div class="error">An error occurred. Please try again.</div>';
+                document.getElementById('message').innerHTML = '<div class="error">Terjadi kesalahan koneksi. Silakan coba lagi.</div>';
+                setLoading(false);
+            }
+        });
+
+        // Enter key untuk submit form
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !loginBtn.disabled) {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
             }
         });
     </script>

@@ -251,18 +251,18 @@
     <div class="container">
         <h1>Create Account</h1>
         <div class="subtitle">Join our secure payment platform</div>
-        <form id="registerForm">
+        <form id="registerForm" autocomplete="off">
             <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                <input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="off" required>
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" autocomplete="off" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Create a secure password" required>
+                <input type="password" id="password" name="password" placeholder="Create a secure password" autocomplete="new-password" required minlength="6">
             </div>
             <button type="submit" id="registerBtn">
                 <span id="registerText">Create Account</span>
@@ -278,22 +278,123 @@
     </div>
 
     <script>
+        // Auto redirect jika sudah login
+        window.onload = function() {
+            // Check jika sudah login, redirect ke payment
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = '/payment.html';
+            }
+            // Button enabled by default, tidak ada validasi awal
+        };
+
+        // Real-time validation - hanya aktif setelah user mulai mengetik
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const registerBtn = document.getElementById('registerBtn');
+        
+        let userStartedTyping = false;
+
+        function validateForm() {
+            // Hanya validasi jika user sudah mulai mengetik
+            if (!userStartedTyping) return;
+            
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            // Check semua field dan validasi
+            const isValid = username.length >= 3 && 
+                           emailRegex.test(email) && 
+                           password.length >= 6;
+            
+            // Enable/disable button
+            if (isValid) {
+                registerBtn.disabled = false;
+                registerBtn.style.opacity = '1';
+            } else {
+                registerBtn.disabled = true;
+                registerBtn.style.opacity = '0.6';
+            }
+        }
+
+        // Validasi real-time saat mengetik - set flag bahwa user sudah mulai
+        usernameInput.addEventListener('input', function() {
+            userStartedTyping = true;
+            const username = this.value.trim();
+            if (username.length > 0 && username.length < 3) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }
+            validateForm();
+        });
+
+        emailInput.addEventListener('input', function() {
+            userStartedTyping = true;
+            const email = this.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email.length > 0 && !emailRegex.test(email)) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }
+            validateForm();
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            userStartedTyping = true;
+            const password = this.value.trim();
+            
+            if (password.length > 0 && password.length < 6) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }
+            validateForm();
+        });
+
+        // Tidak ada initial validation - button enabled secara default
+
+        // Show/hide loading state
+        function setLoading(isLoading) {
+            const registerText = document.getElementById('registerText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            if (isLoading) {
+                registerText.style.display = 'none';
+                loadingSpinner.style.display = 'block';
+                registerBtn.disabled = true;
+            } else {
+                registerText.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                validateForm(); // Re-enable jika form valid
+            }
+        }
+
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const registerBtn = document.getElementById('registerBtn');
-            const registerText = document.getElementById('registerText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
             const messageDiv = document.getElementById('message');
-            
-            // Show loading state
-            registerBtn.disabled = true;
-            registerText.style.display = 'none';
-            loadingSpinner.style.display = 'block';
-            messageDiv.innerHTML = '';
-            
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
+            
+            // Validasi client-side
+            if (!data.username.trim() || !data.email.trim() || !data.password.trim()) {
+                messageDiv.innerHTML = '<div class="error">❌ Mohon isi semua field yang diperlukan.</div>';
+                return;
+            }
+
+            if (data.password.length < 6) {
+                messageDiv.innerHTML = '<div class="error">❌ Password minimal 6 karakter.</div>';
+                return;
+            }
+
+            setLoading(true);
+            messageDiv.innerHTML = '';
             
             try {
                 const response = await fetch('/auth/register', {
@@ -307,47 +408,38 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    messageDiv.innerHTML = '<div class="success">✅ ' + result.message + '</div>';
-                    
-                    // Store token in localStorage
-                    localStorage.setItem('token', result.token);
+                    messageDiv.innerHTML = '<div class="success">✅ Registrasi berhasil! Redirecting to login...</div>';
                     
                     // Redirect to login page after successful registration
                     setTimeout(() => {
                         window.location.href = '/login.html';
                     }, 1500);
                 } else {
-                    messageDiv.innerHTML = '<div class="error">❌ ' + result.error + '</div>';
+                    messageDiv.innerHTML = '<div class="error">❌ ' + (result.error || 'Registrasi gagal.') + '</div>';
+                    setLoading(false);
                 }
             } catch (error) {
-                messageDiv.innerHTML = '<div class="error">❌ An error occurred. Please try again.</div>';
-            } finally {
-                // Reset loading state
-                registerBtn.disabled = false;
-                registerText.style.display = 'block';
-                loadingSpinner.style.display = 'none';
+                messageDiv.innerHTML = '<div class="error">❌ Terjadi kesalahan koneksi. Silakan coba lagi.</div>';
+                setLoading(false);
             }
         });
-        
-        // Add real-time validation
-        document.getElementById('email').addEventListener('input', function() {
-            const email = this.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (email && !emailRegex.test(email)) {
-                this.style.borderColor = '#dc3545';
-            } else {
-                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        // Enter key navigation
+        usernameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                emailInput.focus();
             }
         });
-        
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
-            
-            if (password.length > 0 && password.length < 6) {
-                this.style.borderColor = '#dc3545';
-            } else {
-                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        emailInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                passwordInput.focus();
+            }
+        });
+
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !registerBtn.disabled) {
+                document.getElementById('registerForm').dispatchEvent(new Event('submit'));
             }
         });
     </script>

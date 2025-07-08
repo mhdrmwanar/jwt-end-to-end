@@ -39,9 +39,9 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/payments', paymentRoutes);
 
-// Default route - redirect to payment page
+// Default route - redirect to login page
 app.get('/', (req, res) => {
-    res.redirect('/payment.html');
+    res.redirect('/login.html');
 });
 
 // Health check endpoint
