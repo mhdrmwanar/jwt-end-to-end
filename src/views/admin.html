@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛠️ Admin Panel - Database Management</title>
+    <title>🛠️ Panel Admin - Manajemen Database</title>
     <style>
         * {
             margin: 0;
@@ -478,14 +478,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛠️ Admin Panel - Database Management</h1>
+            <h1>🛠️ Panel Admin - Manajemen Database</h1>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="showTab('users')">👥 Users</button>
-            <button class="tab" onclick="showTab('payments')">💳 Payments</button>
-            <button class="tab" onclick="showTab('transactions')">📊 Transactions</button>
-            <button class="tab" onclick="showTab('database')">🗄️ Database Management</button>
+            <button class="tab active" onclick="showTab('users')">👥 Pengguna</button>
+            <button class="tab" onclick="showTab('payments')">💳 Pembayaran</button>
+            <button class="tab" onclick="showTab('transactions')">📊 Transaksi</button>
+            <button class="tab" onclick="showTab('database')">🗄️ Manajemen Database</button>
         </div>
 
         <div id="message" class="message"></div>
@@ -495,23 +495,23 @@
             <div class="table-container">
                 <div class="table-header">
                     <div class="table-title">
-                        👥 Users Management
+                        👥 Manajemen Pengguna
                         <span class="table-count" id="usersCount">0</span>
                     </div>
                     <div class="actions">
                         <button class="btn btn-success" onclick="loadUsers()">🔄 Refresh</button>
-                        <button class="btn btn-warning" onclick="clearAllUsers()">🗑️ Clear All</button>
+                        <button class="btn btn-warning" onclick="clearAllUsers()">🗑️ Hapus Semua</button>
                     </div>
                 </div>
                 <table id="usersTable">
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>
-                            <th style="width: 150px;">Username</th>
+                            <th style="width: 150px;">Nama Pengguna</th>
                             <th style="width: 200px;">Email</th>
-                            <th style="width: 150px;">Created At</th>
-                            <th style="width: 150px;">Updated At</th>
-                            <th style="width: 120px;">Actions</th>
+                            <th style="width: 150px;">Dibuat Pada</th>
+                            <th style="width: 150px;">Diperbarui Pada</th>
+                            <th style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -524,24 +524,24 @@
             <div class="table-container">
                 <div class="table-header">
                     <div class="table-title">
-                        💳 Payments Management
+                        💳 Manajemen Pembayaran
                         <span class="table-count" id="paymentsCount">0</span>
                     </div>
                     <div class="actions">
                         <button class="btn btn-success" onclick="loadPayments()">🔄 Refresh</button>
-                        <button class="btn btn-warning" onclick="clearAllPayments()">🗑️ Clear All</button>
+                        <button class="btn btn-warning" onclick="clearAllPayments()">🗑️ Hapus Semua</button>
                     </div>
                 </div>
                 <table id="paymentsTable">
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>
-                            <th style="width: 100px;">User ID</th>
-                            <th style="width: 150px;">Amount</th>
+                            <th style="width: 100px;">ID Pengguna</th>
+                            <th style="width: 150px;">Jumlah</th>
                             <th style="width: 120px;">Status</th>
-                            <th style="width: 150px;">Created At</th>
-                            <th style="width: 150px;">Updated At</th>
-                            <th style="width: 120px;">Actions</th>
+                            <th style="width: 150px;">Dibuat Pada</th>
+                            <th style="width: 150px;">Diperbarui Pada</th>
+                            <th style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -554,24 +554,24 @@
             <div class="table-container">
                 <div class="table-header">
                     <div class="table-title">
-                        📊 Transactions Management
+                        📊 Manajemen Transaksi
                         <span class="table-count" id="transactionsCount">0</span>
                     </div>
                     <div class="actions">
                         <button class="btn btn-success" onclick="loadTransactions()">🔄 Refresh</button>
-                        <button class="btn btn-warning" onclick="clearAllTransactions()">🗑️ Clear All</button>
+                        <button class="btn btn-warning" onclick="clearAllTransactions()">🗑️ Hapus Semua</button>
                     </div>
                 </div>
                 <table id="transactionsTable">
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>
-                            <th style="width: 100px;">User ID</th>
-                            <th style="width: 150px;">Type</th>
-                            <th style="width: 150px;">Amount</th>
+                            <th style="width: 100px;">ID Pengguna</th>
+                            <th style="width: 150px;">Tipe</th>
+                            <th style="width: 150px;">Jumlah</th>
                             <th style="width: 120px;">Status</th>
-                            <th style="width: 150px;">Created At</th>
-                            <th style="width: 120px;">Actions</th>
+                            <th style="width: 150px;">Dibuat Pada</th>
+                            <th style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>                    </tbody>
@@ -584,14 +584,14 @@
             <div class="table-container">
                 <div class="table-header">
                     <div class="table-title">
-                        🗄️ Database Management
-                        <span class="table-count" id="databaseCount">DANGER ZONE</span>
+                        🗄️ Manajemen Database
+                        <span class="table-count" id="databaseCount">ZONA BAHAYA</span>
                     </div>
                 </div>
                 
                 <div style="background: rgba(244, 67, 54, 0.1); border: 1px solid #f44336; border-radius: 12px; padding: 25px; margin-bottom: 30px; max-width: 800px; margin-left: auto; margin-right: auto;">
                     <h3 style="color: #ff6b6b; margin-bottom: 15px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                        ⚠️ DANGER ZONE - Database Operations
+                        ⚠️ ZONA BAHAYA - Operasi Database
                     </h3>
                     <p style="color: #ff8a80; text-align: center; font-size: 14px;">Operasi berikut akan menghapus data secara permanen dan tidak dapat dibatalkan!</p>
                 </div>
@@ -600,19 +600,19 @@
                     <!-- Drop Individual Tables -->
                     <div class="database-card">
                         <div class="database-card-header">
-                            <h4>🗑️ Drop Individual Tables</h4>
+                            <h4>🗑️ Hapus Tabel Individu</h4>
                             <p>Hapus tabel tertentu beserta semua datanya</p>
                         </div>
                         
                         <div class="database-card-actions">
                             <button class="btn btn-danger" onclick="dropTable('users')">
-                                🗑️ Drop Table: users
+                                🗑️ Hapus Tabel: pengguna
                             </button>
                             <button class="btn btn-danger" onclick="dropTable('payments')">
-                                🗑️ Drop Table: payments
+                                🗑️ Hapus Tabel: pembayaran
                             </button>
                             <button class="btn btn-danger" onclick="dropTable('transactions')">
-                                🗑️ Drop Table: transactions
+                                🗑️ Hapus Tabel: transaksi
                             </button>
                         </div>
                     </div>
@@ -620,13 +620,13 @@
                     <!-- Drop All Tables -->
                     <div class="database-card">
                         <div class="database-card-header">
-                            <h4>💥 Drop All Tables</h4>
+                            <h4>💥 Hapus Semua Tabel</h4>
                             <p>Hapus semua tabel dalam database</p>
                         </div>
                         
                         <div class="database-card-actions">
                             <button class="btn btn-danger" onclick="dropAllTables()">
-                                💥 Drop ALL Tables
+                                💥 Hapus SEMUA Tabel
                             </button>
                             <small style="color: #ff8a80; display: block; text-align: center; margin-top: 10px;">
                                 ⚠️ Ini akan menghapus SEMUA data!
@@ -637,13 +637,13 @@
                     <!-- Recreate Schema -->
                     <div class="database-card">
                         <div class="database-card-header">
-                            <h4>🔄 Recreate Schema</h4>
+                            <h4>🔄 Buat Ulang Skema</h4>
                             <p>Reset database ke kondisi awal (hapus & buat ulang)</p>
                         </div>
                         
                         <div class="database-card-actions">
                             <button class="btn btn-warning" onclick="recreateSchema()">
-                                🔄 Recreate Database Schema
+                                🔄 Buat Ulang Skema Database
                             </button>
                             <small style="color: #ffa726; display: block; text-align: center; margin-top: 10px;">
                                 ℹ️ Akan membuat tabel kosong baru
@@ -654,16 +654,16 @@
                     <!-- Database Info -->
                     <div class="database-card">
                         <div class="database-card-header">
-                            <h4>📊 Database Statistics</h4>
+                            <h4>📊 Statistik Database</h4>
                             <p>Informasi statistik database real-time</p>
                         </div>
                         
                         <div class="database-card-stats">
                             <div id="dbStats" style="color: #a0a0b8; margin-bottom: 15px;">
-                                <p>Loading statistics...</p>
+                                <p>Memuat statistik...</p>
                             </div>
                             <button class="btn btn-success" onclick="loadDatabaseStats()">
-                                🔄 Refresh Stats
+                                🔄 Refresh Statistik
                             </button>
                         </div>
                     </div>
@@ -674,7 +674,7 @@
 
     <!-- Logout Button -->
     <button class="logout-btn" onclick="goBackToLogin()">
-        ⬅ LOGOUT
+        ⬅ KELUAR
     </button>
 
     <!-- Confirm Dialog -->
@@ -774,10 +774,10 @@
                         `;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #a0a0b8; padding: 40px;">📂 Tidak ada data users</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #a0a0b8; padding: 40px;">📂 Tidak ada data pengguna</td></tr>';
                 }
             } catch (error) {
-                showMessage('Error loading users: ' + error.message, 'error');
+                showMessage('Gagal memuat pengguna: ' + error.message, 'error');
             }
         }
 
@@ -815,10 +815,10 @@
                         `;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #a0a0b8; padding: 40px;">💳 Tidak ada data payments</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #a0a0b8; padding: 40px;">💳 Tidak ada data pembayaran</td></tr>';
                 }
             } catch (error) {
-                showMessage('Error loading payments: ' + error.message, 'error');
+                showMessage('Gagal memuat pembayaran: ' + error.message, 'error');
             }
         }
 
@@ -856,119 +856,119 @@
                         `;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #a0a0b8; padding: 40px;">📊 Tidak ada data transactions</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #a0a0b8; padding: 40px;">📊 Tidak ada data transaksi</td></tr>';
                 }
             } catch (error) {
-                showMessage('Error loading transactions: ' + error.message, 'error');
+                showMessage('Gagal memuat transaksi: ' + error.message, 'error');
             }
         }
 
         // Delete functions
         function deleteUser(id) {
-            showConfirm(`Hapus user dengan ID ${id}?`, async function() {
+            showConfirm(`Hapus pengguna dengan ID ${id}?`, async function() {
                 try {
                     const response = await fetch(`/admin/users/${id}`, { method: 'DELETE' });
                     const result = await response.json();
                     
                     if (response.ok) {
-                        showMessage('User berhasil dihapus!', 'success');
+                        showMessage('Pengguna berhasil dihapus!', 'success');
                         loadUsers();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
 
         function deletePayment(id) {
-            showConfirm(`Hapus payment dengan ID ${id.substring(0, 8)}...?`, async function() {
+            showConfirm(`Hapus pembayaran dengan ID ${id.substring(0, 8)}...?`, async function() {
                 try {
                     const response = await fetch(`/admin/payments/${id}`, { method: 'DELETE' });
                     const result = await response.json();
                     
                     if (response.ok) {
-                        showMessage('Payment berhasil dihapus!', 'success');
+                        showMessage('Pembayaran berhasil dihapus!', 'success');
                         loadPayments();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
 
         function deleteTransaction(id) {
-            showConfirm(`Hapus transaction dengan ID ${id.substring(0, 8)}...?`, async function() {
+            showConfirm(`Hapus transaksi dengan ID ${id.substring(0, 8)}...?`, async function() {
                 try {
                     const response = await fetch(`/admin/transactions/${id}`, { method: 'DELETE' });
                     const result = await response.json();
                     
                     if (response.ok) {
-                        showMessage('Transaction berhasil dihapus!', 'success');
+                        showMessage('Transaksi berhasil dihapus!', 'success');
                         loadTransactions();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
 
         // Clear all functions
         function clearAllUsers() {
-            showConfirm('Hapus SEMUA data users? Tindakan ini tidak dapat dibatalkan!', async function() {
+            showConfirm('Hapus SEMUA data pengguna? Tindakan ini tidak dapat dibatalkan!', async function() {
                 try {
                     const response = await fetch('/admin/users/clear', { method: 'DELETE' });
                     const result = await response.json();
                     
                     if (response.ok) {
-                        showMessage('Semua users berhasil dihapus!', 'success');
+                        showMessage('Semua pengguna berhasil dihapus!', 'success');
                         loadUsers();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
 
         function clearAllPayments() {
-            showConfirm('Hapus SEMUA data payments? Tindakan ini tidak dapat dibatalkan!', async function() {
+            showConfirm('Hapus SEMUA data pembayaran? Tindakan ini tidak dapat dibatalkan!', async function() {
                 try {
                     const response = await fetch('/admin/payments/clear', { method: 'DELETE' });
                     const result = await response.json();
                     
                     if (response.ok) {
-                        showMessage('Semua payments berhasil dihapus!', 'success');
+                        showMessage('Semua pembayaran berhasil dihapus!', 'success');
                         loadPayments();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
 
         function clearAllTransactions() {
-            showConfirm('Hapus SEMUA data transactions? Tindakan ini tidak dapat dibatalkan!', async function() {
+            showConfirm('Hapus SEMUA data transaksi? Tindakan ini tidak dapat dibatalkan!', async function() {
                 try {
                     const response = await fetch('/admin/transactions/clear', { method: 'DELETE' });
                     const result = await response.json();
                     
                     if (response.ok) {
-                        showMessage('Semua transactions berhasil dihapus!', 'success');
+                        showMessage('Semua transaksi berhasil dihapus!', 'success');
                         loadTransactions();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
@@ -984,10 +984,10 @@
                         showMessage(`Tabel ${tableName} berhasil dihapus!`, 'success');
                         loadDatabaseStats();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
@@ -1002,10 +1002,10 @@
                         showMessage('Semua tabel berhasil dihapus!', 'success');
                         loadDatabaseStats();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
@@ -1017,17 +1017,17 @@
                     const result = await response.json();
                     
                     if (response.ok) {
-                        showMessage('Database schema berhasil dibuat ulang!', 'success');
+                        showMessage('Skema database berhasil dibuat ulang!', 'success');
                         loadDatabaseStats();
                         // Refresh all tabs
                         loadUsers();
                         loadPayments();
                         loadTransactions();
                     } else {
-                        showMessage('Error: ' + result.error, 'error');
+                        showMessage('Gagal: ' + result.error, 'error');
                     }
                 } catch (error) {
-                    showMessage('Error: ' + error.message, 'error');
+                    showMessage('Gagal: ' + error.message, 'error');
                 }
             });
         }
@@ -1042,42 +1042,42 @@
                     
                     // Update database count in header
                     const totalRecords = stats.users + stats.payments + stats.transactions;
-                    document.getElementById('databaseCount').textContent = `${totalRecords} Records`;
+                    document.getElementById('databaseCount').textContent = `${totalRecords} Rekord`;
                     
                     document.getElementById('dbStats').innerHTML = `
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; text-align: left;">
                             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <span>👥 Users:</span> 
+                                <span>👥 Pengguna:</span> 
                                 <strong style="color: #7877c6;">${stats.users}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <span>💳 Payments:</span> 
+                                <span>💳 Pembayaran:</span> 
                                 <strong style="color: #66bb6a;">${stats.payments}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <span>📊 Transactions:</span> 
+                                <span>📊 Transaksi:</span> 
                                 <strong style="color: #ffa726;">${stats.transactions}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <span>✅ Completed:</span> 
+                                <span>✅ Selesai:</span> 
                                 <strong style="color: #4caf50;">${stats.completedPayments}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <span>⏳ Pending:</span> 
+                                <span>⏳ Menunggu:</span> 
                                 <strong style="color: #ff9800;">${stats.pendingPayments}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <span>📅 Updated:</span> 
+                                <span>📅 Diperbarui:</span> 
                                 <strong style="color: #a0a0b8;">${new Date().toLocaleTimeString('id-ID')}</strong>
                             </div>
                         </div>
                     `;
                 } else {
-                    document.getElementById('dbStats').innerHTML = '<p style="color: #ff6b6b; text-align: center;">Error loading stats</p>';
+                    document.getElementById('dbStats').innerHTML = '<p style="color: #ff6b6b; text-align: center;">Gagal memuat statistik</p>';
                     document.getElementById('databaseCount').textContent = 'ERROR';
                 }
             } catch (error) {
-                document.getElementById('dbStats').innerHTML = '<p style="color: #ff6b6b; text-align: center;">Error: ' + error.message + '</p>';
+                document.getElementById('dbStats').innerHTML = '<p style="color: #ff6b6b; text-align: center;">Gagal: ' + error.message + '</p>';
                 document.getElementById('databaseCount').textContent = 'ERROR';
             }
         }
@@ -1161,12 +1161,12 @@
         function updateAdminHeader(user) {
             const header = document.querySelector('.header h1');
             if (header) {
-                header.innerHTML = `🛠️ Admin Panel - Welcome ${user.username}`;
+                header.innerHTML = `🛠️ Panel Admin - Selamat Datang ${user.username}`;
             }
         }
 
         function goBackToLogin() {
-            if (confirm('🚪 Logout dari admin panel?\n\nAnda akan kembali ke halaman login admin.')) {
+            if (confirm('🚪 Keluar dari panel admin?\n\nAnda akan kembali ke halaman login admin.')) {
                 // Clear admin tokens
                 localStorage.removeItem('adminToken');
                 localStorage.removeItem('token');

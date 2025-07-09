@@ -41,9 +41,18 @@ app.use('/users', userRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/admin', adminRoutes);
 
-// Default route - redirect to login portal
+// Default route - redirect to user login
 app.get('/', (req, res) => {
-    res.redirect('/portal.html');
+    res.redirect('/login.html');
+});
+
+// User login routes
+app.get('/user', (req, res) => {
+    res.redirect('/login.html');
+});
+
+app.get('/login', (req, res) => {
+    res.redirect('/login.html');
 });
 
 // Admin panel routes
@@ -56,6 +65,10 @@ app.get('/admin-login', (req, res) => {
 });
 
 app.get('/login.admin', (req, res) => {
+    res.redirect('/admin-login.html');
+});
+
+app.get('/admin', (req, res) => {
     res.redirect('/admin-login.html');
 });
 
