@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 // Load environment variables FIRST
 dotenv.config();
 
-import connectDB from './config/db';
+import connectDB, { AppDataSource } from './config/db';
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
 import paymentRoutes from './routes/paymentRoutes';
@@ -78,12 +78,53 @@ app.get('/debug', (req, res) => {
 });
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'OK', 
-        timestamp: new Date().toISOString(),
-        service: 'Secure Payment Gateway'
-    });
+app.get('/health', async (req, res) => {
+    try {
+        // Check database connection
+        const isDbConnected = AppDataSource.isInitialized;
+        
+        // Basic system info
+        const healthData = {
+            status: isDbConnected ? 'OK' : 'ERROR',
+            timestamp: new Date().toISOString(),
+            service: 'Secure Payment Gateway',
+            version: '1.0.0',
+            environment: process.env.NODE_ENV || 'development',
+            database: {
+                type: 'SQLite',
+                connected: isDbConnected,
+                status: isDbConnected ? 'Connected' : 'Disconnected'
+            },
+            server: {
+                port: PORT,
+                uptime: process.uptime(),
+                memory: {
+                    used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + ' MB',
+                    total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + ' MB'
+                }
+            },
+            endpoints: {
+                userLogin: '/login.html',
+                adminLogin: '/admin-login.html',
+                api: {
+                    auth: '/auth',
+                    users: '/users',
+                    payments: '/payments',
+                    admin: '/admin'
+                }
+            }
+        };
+
+        res.status(isDbConnected ? 200 : 503).json(healthData);
+    } catch (error) {
+        res.status(503).json({
+            status: 'ERROR',
+            timestamp: new Date().toISOString(),
+            service: 'Secure Payment Gateway',
+            error: 'Health check failed',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
 });
 
 // Start the server

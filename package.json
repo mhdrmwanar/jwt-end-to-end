@@ -5,9 +5,12 @@
   "main": "src/app.ts",
   "scripts": {
     "start": "node dist/app.js",
-    "build": "npx tsc && cp -r src/views dist/",
-    "dev": "npm run build && node dist/app.js",
-    "clean": "rm -rf dist"
+    "build": "npx tsc && xcopy src\\views dist\\views /E /I",
+    "dev": "npx ts-node src/app.ts",
+    "clean": "rmdir /s /q dist",
+    "create-admin": "npx ts-node src/scripts/createAdmin.ts",
+    "admin-info": "npx ts-node src/scripts/showAdminInfo.ts",
+    "setup": "npm run create-admin && npm run dev"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
