@@ -7,6 +7,7 @@
 Health Check adalah **endpoint khusus** yang digunakan untuk:
 
 ### 🎯 **Fungsi Utama:**
+
 1. **Monitoring Status Aplikasi** - Mengecek apakah server masih berjalan dengan baik
 2. **Database Connection Check** - Memverifikasi koneksi ke database SQLite
 3. **System Information** - Menampilkan info sistem dan performa
@@ -14,6 +15,7 @@ Health Check adalah **endpoint khusus** yang digunakan untuk:
 5. **Debugging & Troubleshooting** - Membantu diagnosa masalah
 
 ### 📊 **Response Format:**
+
 ```json
 {
   "status": "OK",
@@ -39,7 +41,7 @@ Health Check adalah **endpoint khusus** yang digunakan untuk:
     "adminLogin": "/admin-login.html",
     "api": {
       "auth": "/auth",
-      "users": "/users", 
+      "users": "/users",
       "payments": "/payments",
       "admin": "/admin"
     }
@@ -48,12 +50,14 @@ Health Check adalah **endpoint khusus** yang digunakan untuk:
 ```
 
 ### 🚨 **Status Codes:**
+
 - **200 OK** - Aplikasi berjalan normal
 - **503 Service Unavailable** - Ada masalah (database disconnect, error)
 
 ### 💼 **Kegunaan Praktis:**
 
 #### 1. **Development & Testing**
+
 ```bash
 # Cek apakah server sudah jalan
 curl http://localhost:3000/health
@@ -63,12 +67,14 @@ watch -n 5 curl -s http://localhost:3000/health
 ```
 
 #### 2. **Production Monitoring**
+
 - Load balancer dapat menggunakan endpoint ini
 - Monitoring tools (Nagios, Zabbix, etc.)
 - Docker health checks
 - Kubernetes liveness/readiness probes
 
 #### 3. **Debugging**
+
 - Cek status database connection
 - Monitor memory usage
 - Verify all endpoints tersedia
@@ -77,32 +83,39 @@ watch -n 5 curl -s http://localhost:3000/health
 ### 🔧 **Contoh Penggunaan:**
 
 #### Browser
+
 Buka: `http://localhost:3000/health`
 
 #### PowerShell
+
 ```powershell
 Invoke-RestMethod -Uri "http://localhost:3000/health"
 ```
 
 #### curl
+
 ```bash
 curl -X GET http://localhost:3000/health
 ```
 
 #### JavaScript/Fetch
+
 ```javascript
 fetch('/health')
-  .then(response => response.json())
-  .then(data => console.log('Server status:', data.status));
+  .then((response) => response.json())
+  .then((data) => console.log('Server status:', data.status));
 ```
 
 ### 🛡️ **Security Note:**
+
 Health check endpoint biasanya **tidak memerlukan autentikasi** karena:
+
 - Digunakan untuk monitoring eksternal
 - Hanya menampilkan informasi status umum
 - Tidak mengekspos data sensitif
 
 ### 📈 **Best Practices:**
+
 1. **Selalu sediakan health check** untuk aplikasi production
 2. **Include database status** untuk memastikan konektivitas
 3. **Monitor response time** - health check harus cepat (<1 detik)
